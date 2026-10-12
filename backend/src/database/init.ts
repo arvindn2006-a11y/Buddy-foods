@@ -74,7 +74,9 @@ export async function seedDefaultData(): Promise<void> {
         { name: 'Snacks & Chaat', local: 'சிற்றுண்டி', icon: 'Cookie', color: '#EA580C', order: 3 },
         { name: 'Beverages', local: 'சூடான பானங்கள்', icon: 'CupSoda', color: '#0369A1', order: 4 },
         { name: 'Fresh Juices', local: 'குளிர் பழச்சாறு', icon: 'Citrus', color: '#16A34A', order: 5 },
-        { name: 'Desserts & Sweets', local: 'இனிப்புகள்', icon: 'IceCream', color: '#DB2777', order: 6 }
+        { name: 'Desserts & Sweets', local: 'இனிப்புகள்', icon: 'IceCream', color: '#DB2777', order: 6 },
+        { name: 'Momos Special', local: 'மோமோஸ்', icon: 'UtensilsCrossed', color: '#EA580C', order: 7 },
+        { name: 'Rolls & Wraps', local: 'ரோல்ஸ்', icon: 'Cookie', color: '#D97706', order: 8 }
       ];
 
       for (const cat of categories) {
@@ -115,6 +117,16 @@ export async function seedDefaultData(): Promise<void> {
         } else if (cat.name === 'Desserts & Sweets') {
           await insertProduct(connection, catId, 'Hot Gulab Jamun (2 Pcs)', 'குலாப் ஜாமுன்', 'SW01', 30.00, 12.00, 'veg', 2);
           await insertProduct(connection, catId, 'Vanilla Ice Cream Cup', 'ஐஸ்கிரீம்', 'SW02', 25.00, 12.00, 'veg', 1);
+        } else if (cat.name === 'Momos Special') {
+          await insertProduct(connection, catId, 'Steamed Veg Momos (6 Pcs)', 'ஸ்டீம்ட் மோமோஸ்', 'MO01', 60.00, 24.00, 'veg', 5);
+          await insertProduct(connection, catId, 'Crispy Fried Veg Momos (6 Pcs)', 'ஃப்ரைட் மோமோஸ்', 'MO02', 70.00, 28.00, 'veg', 6);
+          await insertProduct(connection, catId, 'Peri Peri Tossed Momos (6 Pcs)', 'பெரி பெரி மோமோஸ்', 'MO03', 80.00, 32.00, 'veg', 6);
+          await insertProduct(connection, catId, 'Paneer Fried Momos (6 Pcs)', 'பன்னீர் மோமோஸ்', 'MO04', 90.00, 36.00, 'veg', 6);
+        } else if (cat.name === 'Rolls & Wraps') {
+          await insertProduct(connection, catId, 'Classic Veg Kathi Roll', 'வெஜ் காதி ரோல்', 'RO01', 50.00, 20.00, 'veg', 5);
+          await insertProduct(connection, catId, 'Paneer Tikka Roll', 'பன்னீர் டிக்கா ரோல்', 'RO02', 70.00, 30.00, 'veg', 6);
+          await insertProduct(connection, catId, 'Egg Kathi Roll', 'முட்டை ரோல்', 'RO03', 60.00, 24.00, 'non-veg', 5);
+          await insertProduct(connection, catId, 'Chicken Tikka Roll', 'சிக்கன் டிக்கா ரோல்', 'RO04', 85.00, 40.00, 'non-veg', 7);
         }
       }
     }
@@ -189,7 +201,9 @@ export async function seedFallbackStore(): Promise<void> {
     { id: 3, name: 'Snacks & Chaat', local_name: 'சிற்றுண்டி', icon: 'Cookie', color: '#EA580C', display_order: 3, is_active: 1 },
     { id: 4, name: 'Beverages', local_name: 'சூடான பானங்கள்', icon: 'CupSoda', color: '#0369A1', display_order: 4, is_active: 1 },
     { id: 5, name: 'Fresh Juices', local_name: 'குளிர் பழச்சாறு', icon: 'Citrus', color: '#16A34A', display_order: 5, is_active: 1 },
-    { id: 6, name: 'Desserts & Sweets', local_name: 'இனிப்புகள்', icon: 'IceCream', color: '#DB2777', display_order: 6, is_active: 1 }
+    { id: 6, name: 'Desserts & Sweets', local_name: 'இனிப்புகள்', icon: 'IceCream', color: '#DB2777', display_order: 6, is_active: 1 },
+    { id: 7, name: 'Momos Special', local_name: 'மோமோஸ்', icon: 'UtensilsCrossed', color: '#EA580C', display_order: 7, is_active: 1 },
+    { id: 8, name: 'Rolls & Wraps', local_name: 'ரோல்ஸ்', icon: 'Cookie', color: '#D97706', display_order: 8, is_active: 1 }
   ];
 
   fallbackStore.products = [
@@ -219,10 +233,22 @@ export async function seedFallbackStore(): Promise<void> {
 
     { id: 21, category_id: 5, name: 'Fresh Watermelon Juice', local_name: 'தர்பூசணி சாறு', code: 'J01', selling_price: 30.00, cost_price: 12.00, food_type: 'beverage', preparation_time_mins: 3, is_available: 1 },
     { id: 22, category_id: 5, name: 'Fresh Lime Soda / Sweet', local_name: 'எலுமிச்சை சோடா', code: 'J02', selling_price: 25.00, cost_price: 9.00, food_type: 'beverage', preparation_time_mins: 3, is_available: 1 },
-    { id: 23, category_id: 5, name: 'Mosambi (Sweet Lime) Juice', local_name: 'சாத்துக்குடி சாறு', code: 'J03', shipping_price: 40.00, selling_price: 40.00, cost_price: 18.00, food_type: 'beverage', preparation_time_mins: 4, is_available: 1 },
+    { id: 23, category_id: 5, name: 'Mosambi (Sweet Lime) Juice', local_name: 'சாத்துக்குடி சாறு', code: 'J03', selling_price: 40.00, cost_price: 18.00, food_type: 'beverage', preparation_time_mins: 4, is_available: 1 },
 
     { id: 24, category_id: 6, name: 'Hot Gulab Jamun (2 Pcs)', local_name: 'குலாப் ஜாமுன்', code: 'SW01', selling_price: 30.00, cost_price: 12.00, food_type: 'veg', preparation_time_mins: 2, is_available: 1 },
-    { id: 25, category_id: 6, name: 'Vanilla Ice Cream Cup', local_name: 'ஐஸ்கிரீம்', code: 'SW02', selling_price: 25.00, cost_price: 12.00, food_type: 'veg', preparation_time_mins: 1, is_available: 1 }
+    { id: 25, category_id: 6, name: 'Vanilla Ice Cream Cup', local_name: 'ஐஸ்கிரீம்', code: 'SW02', selling_price: 25.00, cost_price: 12.00, food_type: 'veg', preparation_time_mins: 1, is_available: 1 },
+
+    // Momos Special (4 types)
+    { id: 26, category_id: 7, name: 'Steamed Veg Momos (6 Pcs)', local_name: 'ஸ்டீம்ட் மோமோஸ்', code: 'MO01', selling_price: 60.00, cost_price: 24.00, food_type: 'veg', preparation_time_mins: 5, is_available: 1 },
+    { id: 27, category_id: 7, name: 'Crispy Fried Veg Momos (6 Pcs)', local_name: 'ஃப்ரைட் மோமோஸ்', code: 'MO02', selling_price: 70.00, cost_price: 28.00, food_type: 'veg', preparation_time_mins: 6, is_available: 1 },
+    { id: 28, category_id: 7, name: 'Peri Peri Tossed Momos (6 Pcs)', local_name: 'பெரி பெரி மோமோஸ்', code: 'MO03', selling_price: 80.00, cost_price: 32.00, food_type: 'veg', preparation_time_mins: 6, is_available: 1 },
+    { id: 29, category_id: 7, name: 'Paneer Fried Momos (6 Pcs)', local_name: 'பன்னீர் மோமோஸ்', code: 'MO04', selling_price: 90.00, cost_price: 36.00, food_type: 'veg', preparation_time_mins: 6, is_available: 1 },
+
+    // Rolls & Wraps (4 types)
+    { id: 30, category_id: 8, name: 'Classic Veg Kathi Roll', local_name: 'வெஜ் காதி ரோல்', code: 'RO01', selling_price: 50.00, cost_price: 20.00, food_type: 'veg', preparation_time_mins: 5, is_available: 1 },
+    { id: 31, category_id: 8, name: 'Paneer Tikka Roll', local_name: 'பன்னீர் டிக்கா ரோல்', code: 'RO02', selling_price: 70.00, cost_price: 30.00, food_type: 'veg', preparation_time_mins: 6, is_available: 1 },
+    { id: 32, category_id: 8, name: 'Egg Kathi Roll', local_name: 'முட்டை ரோல்', code: 'RO03', selling_price: 60.00, cost_price: 24.00, food_type: 'non-veg', preparation_time_mins: 5, is_available: 1 },
+    { id: 33, category_id: 8, name: 'Chicken Tikka Roll', local_name: 'சிக்கன் டிக்கா ரோல்', code: 'RO04', selling_price: 85.00, cost_price: 40.00, food_type: 'non-veg', preparation_time_mins: 7, is_available: 1 }
   ];
 
   fallbackStore.business_settings = {

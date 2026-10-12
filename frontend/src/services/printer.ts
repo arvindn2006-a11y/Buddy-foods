@@ -29,11 +29,30 @@ export async function checkPrintBridgeStatus(bridgeUrl = 'http://localhost:9123'
  * Print order receipt using configured printer mode
  */
 export async function printOrderReceipt(order: Order, settings: Partial<BusinessSettings> = {}): Promise<PrintResult> {
-  const printerType = settings.printer_type || 'bridge';
+  const printerType = settings.printer_type || 'browser';
   const bridgeUrl = settings.printer_bridge_url || 'http://localhost:9123';
   const { hex, bytes } = buildOrderReceiptBytes(order, settings);
 
-  // 1. Local Print Bridge Mode (Recommended for production POS counters)
+  // 1. Browser Print Mode (Standard & Recommended for Tablets, Mobiles & Thermal Printers)
+  if (printerType === 'browser') {
+    try {
+      window.print();
+      return {
+        success: true,
+        message: 'System / Thermal print dialog opened successfully.',
+        method: 'browser'
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: `Failed to open print dialog: ${err.message}`,
+        method: 'browser',
+        error: err.message
+      };
+    }
+  }
+
+  // 2. Local Print Bridge Mode (For dedicated Windows POS counter with ESC/POS hardware)
   if (printerType === 'bridge') {
     try {
       const response = await fetch(`${bridgeUrl}/print`, {
@@ -57,25 +76,26 @@ export async function printOrderReceipt(order: Order, settings: Partial<Business
           method: 'bridge'
         };
       } else {
+        // Fallback to browser print if bridge rejected
+        window.print();
         return {
-          success: false,
-          message: data.message || 'Thermal printer bridge rejected print job.',
-          method: 'bridge',
-          error: data.message
+          success: true,
+          message: 'Bridge rejected, opened device print dialog as fallback.',
+          method: 'browser'
         };
       }
     } catch (err: any) {
-      console.warn('Local print bridge unreachable:', err.message);
+      // Fallback to browser print so customer receipt always prints on Tab / Mobile / PC
+      window.print();
       return {
-        success: false,
-        message: `Local Print Bridge is not responding at ${bridgeUrl}. Start bridge or switch to Web Serial/Browser mode in Printer Settings.`,
-        method: 'bridge',
-        error: err.message
+        success: true,
+        message: 'Print Bridge unreachable. Opened device print dialog.',
+        method: 'browser'
       };
     }
   }
 
-  // 2. Web Serial API Mode (Direct USB Cable from Browser)
+  // 3. Web Serial API Mode (Direct USB Cable from Browser)
   if (printerType === 'serial') {
     if ('serial' in navigator) {
       try {
@@ -92,36 +112,29 @@ export async function printOrderReceipt(order: Order, settings: Partial<Business
           method: 'serial'
         };
       } catch (err: any) {
+        window.print();
         return {
-          success: false,
-          message: `Web Serial communication failed: ${err.message}`,
-          method: 'serial',
+          success: true,
+          message: `Serial port failed (${err.message}). Opened device print dialog.`,
+          method: 'browser',
           error: err.message
         };
       }
     } else {
+      window.print();
       return {
-        success: false,
-        message: 'Web Serial API is not supported in this browser. Please use Chrome/Edge or Print Bridge.',
-        method: 'serial'
+        success: true,
+        message: 'Web Serial not supported on this device. Opened device print dialog.',
+        method: 'browser'
       };
     }
   }
 
-  // 3. Browser Print Slip Fallback
-  if (printerType === 'browser') {
-    window.print();
-    return {
-      success: true,
-      message: 'Print dialog triggered for thermal receipt.',
-      method: 'browser'
-    };
-  }
-
+  window.print();
   return {
-    success: false,
-    message: 'Unknown printer type configured.',
-    method: 'none'
+    success: true,
+    message: 'Print dialog triggered for thermal receipt.',
+    method: 'browser'
   };
 }
 
@@ -129,9 +142,18 @@ export async function printOrderReceipt(order: Order, settings: Partial<Business
  * Execute test print
  */
 export async function executeTestPrint(settings: Partial<BusinessSettings> = {}): Promise<PrintResult> {
-  const printerType = settings.printer_type || 'bridge';
+  const printerType = settings.printer_type || 'browser';
   const bridgeUrl = settings.printer_bridge_url || 'http://localhost:9123';
   const { hex, bytes } = buildTestReceiptBytes(settings);
+
+  if (printerType === 'browser') {
+    window.print();
+    return {
+      success: true,
+      message: 'Triggered device / thermal print dialog for test receipt.',
+      method: 'browser'
+    };
+  }
 
   if (printerType === 'bridge') {
     try {
@@ -154,18 +176,19 @@ export async function executeTestPrint(settings: Partial<BusinessSettings> = {})
           method: 'bridge'
         };
       } else {
+        window.print();
         return {
-          success: false,
-          message: data.message || 'Printer failed to print test receipt.',
-          method: 'bridge'
+          success: true,
+          message: 'Bridge offline, opened device print dialog for test receipt.',
+          method: 'browser'
         };
       }
     } catch (err: any) {
+      window.print();
       return {
-        success: false,
-        message: `Print Bridge unreachable at ${bridgeUrl}. Ensure print-bridge is running.`,
-        method: 'bridge',
-        error: err.message
+        success: true,
+        message: `Bridge offline at ${bridgeUrl}. Opened device print dialog for test receipt.`,
+        method: 'browser'
       };
     }
   }
@@ -185,17 +208,19 @@ export async function executeTestPrint(settings: Partial<BusinessSettings> = {})
           method: 'serial'
         };
       } catch (err: any) {
+        window.print();
         return {
-          success: false,
-          message: `Serial port error: ${err.message}`,
-          method: 'serial'
+          success: true,
+          message: `Serial port error. Opened device print dialog.`,
+          method: 'browser'
         };
       }
     } else {
+      window.print();
       return {
-        success: false,
-        message: 'Web Serial not supported in this browser.',
-        method: 'serial'
+        success: true,
+        message: 'Web Serial not supported. Opened device print dialog.',
+        method: 'browser'
       };
     }
   }

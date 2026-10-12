@@ -59,6 +59,7 @@ export const Pos: React.FC = () => {
   const [isUpiModalOpen, setIsUpiModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<'menu' | 'cart'>('menu');
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const currency = settings.currency_symbol || '₹';
@@ -161,6 +162,10 @@ export const Pos: React.FC = () => {
   };
 
   // Calculations
+  const cartTotalCount = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
+
   const rawSubtotal = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
   }, [cart]);
@@ -313,8 +318,35 @@ export const Pos: React.FC = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 max-w-[1600px] mx-auto min-h-[calc(100vh-5rem)]">
+      {/* Mobile/Tablet View Switcher Tabs (Hidden on Desktop) */}
+      <div className="lg:hidden flex items-center bg-white p-1.5 rounded-2xl border border-cream-200 shadow-xs">
+        <button
+          onClick={() => setMobileTab('menu')}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
+            mobileTab === 'menu' ? 'bg-suvai-green-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          <UtensilsCrossed className="w-4 h-4" />
+          <span>Food Menu ({filteredProducts.length})</span>
+        </button>
+        <button
+          onClick={() => setMobileTab('cart')}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all relative ${
+            mobileTab === 'cart' ? 'bg-suvai-green-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          <ShoppingBag className="w-4 h-4" />
+          <span>Active Bill</span>
+          {cartTotalCount > 0 && (
+            <span className="bg-suvai-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-extrabold ml-1">
+              {cartTotalCount} | {currency}{grandTotal.toFixed(0)}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* LEFT: Food Items Grid & Category Filters (70% on desktop) */}
-      <div className="flex-1 flex flex-col space-y-4">
+      <div className={`${mobileTab === 'cart' ? 'hidden lg:flex' : 'flex'} flex-1 flex-col space-y-4`}>
         {/* Search & Feedback Banner */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
@@ -324,7 +356,7 @@ export const Pos: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search food by name, Tamil label or code (e.g., Dosa, B01, Tea)..."
+              placeholder="Search food by name, Tamil label or code (e.g., Momos, Rolls, Dosa)..."
               className="w-full pl-12 pr-4 py-3 bg-white border border-cream-200 rounded-2xl text-sm font-medium shadow-xs focus:outline-hidden focus:border-suvai-green-700 focus:ring-2 focus:ring-suvai-green-200 transition-all"
             />
             {searchQuery && (
@@ -340,14 +372,25 @@ export const Pos: React.FC = () => {
 
         {/* Success / Error Alerts */}
         {successBanner && (
-          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex flex-wrap items-center justify-between gap-2 shadow-xs">
             <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{successBanner}</span>
             </div>
-            <button onClick={() => setSuccessBanner(null)} className="text-emerald-700 hover:underline">
-              Dismiss
-            </button>
+            <div className="flex items-center gap-2">
+              {completedOrder && (
+                <button
+                  onClick={() => setIsReceiptModalOpen(true)}
+                  className="px-3 py-1.5 bg-suvai-green-900 hover:bg-suvai-green-800 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+                >
+                  <Printer className="w-3.5 h-3.5 text-suvai-orange-400" />
+                  <span>Print Receipt Slip</span>
+                </button>
+              )}
+              <button onClick={() => setSuccessBanner(null)} className="text-emerald-700 hover:underline text-xs">
+                Dismiss
+              </button>
+            </div>
           </div>
         )}
 
@@ -498,7 +541,7 @@ export const Pos: React.FC = () => {
       </div>
 
       {/* RIGHT: Touch Billing & Cart Terminal Panel (30% on desktop) */}
-      <div className="w-full lg:w-[420px] bg-white rounded-3xl border border-cream-200 shadow-xl shadow-stone-200/40 flex flex-col overflow-hidden">
+      <div className={`${mobileTab === 'menu' ? 'hidden lg:flex' : 'flex'} w-full lg:w-[420px] bg-white rounded-3xl border border-cream-200 shadow-xl shadow-stone-200/40 flex flex-col overflow-hidden`}>
         {/* Panel Header */}
         <div className="p-4 bg-suvai-green-950 text-white flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -767,6 +810,28 @@ export const Pos: React.FC = () => {
         isOpen={isReceiptModalOpen}
         onClose={() => setIsReceiptModalOpen(false)}
       />
+
+      {/* Floating Bottom Cart Bar for Tablet & Mobile */}
+      {cartTotalCount > 0 && mobileTab === 'menu' && (
+        <div className="lg:hidden fixed bottom-18 left-3 right-3 z-30 bg-suvai-green-950 text-white rounded-2xl p-3 shadow-2xl flex items-center justify-between border border-suvai-green-800 animate-in slide-in-from-bottom">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-suvai-orange-500 flex items-center justify-center font-black text-sm text-white shadow-sm">
+              {cartTotalCount}
+            </div>
+            <div>
+              <p className="text-[11px] text-cream-300 font-medium">Bill Subtotal</p>
+              <p className="text-sm font-black text-white">{currency}{grandTotal.toFixed(2)}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setMobileTab('cart')}
+            className="bg-suvai-orange-500 hover:bg-suvai-orange-400 active:scale-95 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 transition-all"
+          >
+            <span>Review & Pay</span>
+            ➔
+          </button>
+        </div>
+      )}
     </div>
   );
 };

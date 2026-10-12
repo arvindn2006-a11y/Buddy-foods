@@ -204,9 +204,80 @@ export const Orders: React.FC = () => {
         </button>
       </form>
 
-      {/* Orders Table */}
+      {/* Orders List & Table */}
       <div className="bg-white rounded-3xl border border-cream-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile / Tablet Cards View */}
+        <div className="block md:hidden divide-y divide-cream-100">
+          {isLoading ? (
+            <div className="py-12 text-center text-stone-400">
+              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-suvai-green-800" />
+              <span>Loading transactions...</span>
+            </div>
+          ) : orders.length > 0 ? (
+            orders.map(order => {
+              const dateObj = new Date(order.order_date);
+              return (
+                <div key={order.id} className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-8 h-8 rounded-xl bg-suvai-green-100 text-suvai-green-900 font-black text-sm flex items-center justify-center">
+                        #{order.token_number || '-'}
+                      </span>
+                      <div>
+                        <p className="font-mono font-bold text-xs text-stone-900">{order.bill_number}</p>
+                        <p className="text-[10px] text-stone-400">
+                          {dateObj.toLocaleDateString('en-IN')} {dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="font-black text-sm text-suvai-green-950">
+                        {currency}{Number(order.grand_total).toFixed(2)}
+                      </p>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                        order.payment_method === 'upi' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'
+                      }`}>
+                        {order.payment_method}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 text-xs">
+                    <span className="text-stone-600 font-medium">{order.customer_name}</span>
+
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleOpenReceipt(order)}
+                        className="px-3 py-1.5 bg-suvai-green-900 hover:bg-suvai-green-800 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
+                      >
+                        <Printer className="w-3.5 h-3.5 text-suvai-orange-400" />
+                        <span>Print Receipt</span>
+                      </button>
+
+                      {order.order_status === 'completed' && (
+                        <button
+                          onClick={() => setCancelModalOrder(order)}
+                          className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                          title="Cancel Order"
+                        >
+                          <Ban className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="py-12 text-center text-stone-400 italic">
+              No orders match your filter criteria.
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="bg-cream-50 border-b border-cream-200 text-stone-600 uppercase tracking-wider">
@@ -269,13 +340,14 @@ export const Orders: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <div className="flex items-center justify-end space-x-1">
+                        <div className="flex items-center justify-end space-x-1.5">
                           <button
                             onClick={() => handleOpenReceipt(order)}
-                            className="p-1.5 text-suvai-green-900 hover:bg-suvai-green-100 rounded-lg transition-colors"
+                            className="px-2.5 py-1.5 bg-suvai-green-900 hover:bg-suvai-green-800 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs transition-all"
                             title="Preview & Reprint Receipt"
                           >
-                            <Printer className="w-4 h-4" />
+                            <Printer className="w-3.5 h-3.5 text-suvai-orange-400" />
+                            <span>Print</span>
                           </button>
                           {order.order_status === 'completed' && (
                             <button

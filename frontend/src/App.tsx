@@ -18,6 +18,8 @@ import { PrinterSettings } from './pages/PrinterSettings';
 import { BusinessSettings } from './pages/BusinessSettings';
 import { Backup } from './pages/Backup';
 
+import { Receipt, UtensilsCrossed, Clock, Printer, Menu } from 'lucide-react';
+
 const pageTitles: Record<string, string> = {
   dashboard: 'Canteen Dashboard',
   pos: 'Point of Sale (New Bill)',
@@ -114,9 +116,56 @@ const MainLayout: React.FC = () => {
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
-        <main className="flex-1 p-4 lg:p-8">
+        <main className="flex-1 p-3 sm:p-4 lg:p-8 pb-20 lg:pb-8">
           {renderCurrentPage()}
         </main>
+
+        {/* Mobile & Tablet Bottom Quick Navigation Bar */}
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-cream-200 px-1 py-1.5 flex items-center justify-around shadow-lg">
+          <button
+            onClick={() => setCurrentPage('pos')}
+            className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-extrabold transition-all ${
+              currentPage === 'pos' ? 'text-suvai-green-900 bg-suvai-green-50' : 'text-stone-500'
+            }`}
+          >
+            <Receipt className="w-5 h-5 mb-0.5" />
+            <span>POS</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage('products')}
+            className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-extrabold transition-all ${
+              currentPage === 'products' ? 'text-suvai-green-900 bg-suvai-green-50' : 'text-stone-500'
+            }`}
+          >
+            <UtensilsCrossed className="w-5 h-5 mb-0.5" />
+            <span>Menu</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage('orders')}
+            className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-extrabold transition-all ${
+              currentPage === 'orders' ? 'text-suvai-green-900 bg-suvai-green-50' : 'text-stone-500'
+            }`}
+          >
+            <Clock className="w-5 h-5 mb-0.5" />
+            <span>Orders</span>
+          </button>
+          <button
+            onClick={() => setCurrentPage('printer-settings')}
+            className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-extrabold transition-all ${
+              currentPage === 'printer-settings' ? 'text-suvai-green-900 bg-suvai-green-50' : 'text-stone-500'
+            }`}
+          >
+            <Printer className="w-5 h-5 mb-0.5" />
+            <span>Printer</span>
+          </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-extrabold text-stone-500 hover:text-stone-900 transition-all"
+          >
+            <Menu className="w-5 h-5 mb-0.5" />
+            <span>More</span>
+          </button>
+        </nav>
       </div>
     </div>
   );

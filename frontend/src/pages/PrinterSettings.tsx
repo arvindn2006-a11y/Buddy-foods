@@ -18,7 +18,7 @@ import {
 export const PrinterSettings: React.FC = () => {
   const { settings, updateSettings } = useSettings();
 
-  const [printerType, setPrinterType] = useState(settings.printer_type || 'bridge');
+  const [printerType, setPrinterType] = useState(settings.printer_type || 'browser');
   const [printerWidth, setPrinterWidth] = useState(settings.printer_width || '80');
   const [bridgeUrl, setBridgeUrl] = useState(settings.printer_bridge_url || 'http://localhost:9123');
   const [autoCut, setAutoCut] = useState(settings.printer_auto_cut !== 'false');
@@ -400,28 +400,35 @@ export const PrinterSettings: React.FC = () => {
           <div className="bg-cream-50 p-6 rounded-3xl border border-cream-200 space-y-4 text-xs text-stone-700">
             <div className="flex items-center space-x-2 text-suvai-green-900 font-extrabold text-sm">
               <HelpCircle className="w-4 h-4" />
-              <span>Physical Printer Setup Guide</span>
+              <span>How To Print Properly on Thermal Printers</span>
             </div>
 
             <div className="space-y-3 leading-relaxed">
-              <div>
-                <strong className="text-stone-900 block font-bold">1. Network LAN / Wi-Fi Printer (Port 9100):</strong>
+              <div className="p-3 bg-white rounded-2xl border border-cream-200 space-y-1">
+                <strong className="text-suvai-green-950 block font-black">
+                  🖨️ For Tablets & Mobile Phones (Android, iPad, iPhone):
+                </strong>
                 <p className="text-[11px] text-stone-600">
-                  Connect your thermal printer to canteen router. Configure printer static IP (e.g. <code>192.168.1.100</code>). Print Bridge forwards raw ESC/POS bytes directly.
+                  Select <strong>Browser / Thermal</strong> mode above. When you tap "Print Receipt", the device system print sheet opens. Connect your thermal printer via Bluetooth, AirPrint, or Wi-Fi.
                 </p>
               </div>
 
-              <div>
-                <strong className="text-stone-900 block font-bold">2. USB Cable Printer (Desktop):</strong>
-                <p className="text-[11px] text-stone-600">
-                  Plug in via USB. Use <strong>Web Serial USB</strong> mode for 1-click driverless communication, or start the included Local Print Bridge daemon.
-                </p>
+              <div className="p-3 bg-white rounded-2xl border border-cream-200 space-y-1.5">
+                <strong className="text-stone-900 block font-bold">
+                  ⚙️ 3 Critical Settings in Print Dialog for Clean Cuts:
+                </strong>
+                <ul className="text-[11px] text-stone-600 space-y-1 list-disc pl-4">
+                  <li><strong>Paper Size:</strong> Choose <strong>80mm</strong> or <strong>58mm</strong> (or Receipt roll).</li>
+                  <li><strong>Margins:</strong> Set to <strong>None</strong> or <strong>Minimum</strong>.</li>
+                  <li><strong>Headers & Footers:</strong> <strong>Uncheck</strong> (prevents browser date/URL from printing).</li>
+                  <li><strong>Scale:</strong> Keep at <strong>100% (Default)</strong>.</li>
+                </ul>
               </div>
 
               <div>
-                <strong className="text-stone-900 block font-bold">3. Vercel Cloud Deployment Note:</strong>
+                <strong className="text-stone-900 block font-bold">Local Print Bridge (Desktop Windows POS):</strong>
                 <p className="text-[11px] text-stone-600">
-                  Because cloud websites cannot reach physical USB cables on your counter, the browser uses the local daemon running on <code>localhost:9123</code> or native browser slip printing.
+                  For background silent printing with cash drawer kick on PC counters, start the included bridge daemon using <code>npm run dev:bridge</code>.
                 </p>
               </div>
             </div>

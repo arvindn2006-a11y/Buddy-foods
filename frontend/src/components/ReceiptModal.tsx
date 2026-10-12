@@ -37,17 +37,17 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, settings, isO
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 print:p-0 print:bg-transparent print:static print:block">
+      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] print:max-h-none print:shadow-none print:border-none print:w-auto">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-suvai-green-900 text-white">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-suvai-green-900 text-white print:hidden">
           <div className="flex items-center space-x-2">
             <Printer className="w-5 h-5 text-suvai-orange-400" />
-            <h3 className="font-bold text-lg">Thermal Receipt Preview</h3>
+            <h3 className="font-bold text-base sm:text-lg">Receipt & Token Preview</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-cream-200 hover:text-white hover:bg-suvai-green-800 transition-colors"
+            className="p-1.5 rounded-lg text-cream-200 hover:text-white hover:bg-suvai-green-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -55,7 +55,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, settings, isO
 
         {/* Print Feedback Alert */}
         {printStatus && (
-          <div className={`px-4 py-3 text-sm flex items-start space-x-2 ${printStatus.success ? 'bg-emerald-50 text-emerald-800 border-b border-emerald-200' : 'bg-red-50 text-red-800 border-b border-red-200'}`}>
+          <div className={`px-4 py-3 text-sm flex items-start space-x-2 print:hidden ${printStatus.success ? 'bg-emerald-50 text-emerald-800 border-b border-emerald-200' : 'bg-red-50 text-red-800 border-b border-red-200'}`}>
             {printStatus.success ? (
               <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             ) : (
@@ -69,7 +69,13 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, settings, isO
         )}
 
         {/* Scrollable Receipt Container */}
-        <div className="flex-1 overflow-y-auto p-6 bg-stone-100 flex justify-center">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-stone-100 flex flex-col items-center print:p-0 print:bg-white print:overflow-visible">
+          {/* Helpful printing guide banner for mobile & tablet */}
+          <div className="w-full max-w-[340px] mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 print:hidden flex items-start gap-1.5">
+            <span className="font-bold shrink-0">💡 Tip:</span>
+            <span>Set <strong>Margins: None</strong> and uncheck <strong>Headers & Footers</strong> in the print sheet for a perfect receipt.</span>
+          </div>
+
           {/* Authentic Thermal Slip Paper */}
           <div
             id="thermal-receipt-printable"
@@ -188,7 +194,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, settings, isO
         </div>
 
         {/* Modal Action Footer */}
-        <div className="p-4 bg-white border-t border-stone-200 flex flex-wrap gap-2 justify-between items-center">
+        <div className="p-4 bg-white border-t border-stone-200 flex flex-wrap gap-2 justify-between items-center print:hidden">
           <div className="text-xs text-stone-500">
             Mode: <span className="font-semibold uppercase text-suvai-green-800">{settings.printer_type}</span> ({settings.printer_width}mm)
           </div>
