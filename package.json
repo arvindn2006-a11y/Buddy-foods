@@ -1,0 +1,30 @@
+{
+  "name": "suvai-canteen-management-system",
+  "version": "1.0.0",
+  "description": "Suvai - Smart Canteen Billing & Management System",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install && npm --prefix print-bridge install",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:bridge": "npm --prefix print-bridge run start",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "test": "npm --prefix backend run test",
+    "seed": "npm --prefix backend run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "canteen",
+    "pos",
+    "billing",
+    "thermal-printing",
+    "esc-pos",
+    "pwa",
+    "suvai"
+  ],
+  "author": "Suvai Development Team",
+  "license": "ISC"
+}

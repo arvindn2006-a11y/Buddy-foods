@@ -1,0 +1,13 @@
+{
+  "name": "suvai-print-bridge",
+  "version": "1.0.0",
+  "description": "Local ESC/POS Thermal Receipt Print Bridge for Suvai Canteen POS",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

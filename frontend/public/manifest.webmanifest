@@ -1,0 +1,17 @@
+{
+  "name": "Suvai Smart Canteen POS",
+  "short_name": "Suvai POS",
+  "description": "Smart Canteen Billing & Management System for College Food Courts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFBF7",
+  "theme_color": "#14532D",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
